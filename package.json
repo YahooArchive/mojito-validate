@@ -1,0 +1,44 @@
+{
+  "name": "mojito-validate",
+  "version": "0.0.0PR1",
+  "description": "Subcommand for mojito-cli to validate mojito configuration files",
+  "scripts": {
+    "test": "echo none && exit 1"
+  },
+  "dependencies": {
+    "npmlog": "0.0.2",
+    "JSV": "~4.0.2",
+    "jsonlint": "~1.5.1",
+    "js-yaml": "~2.0.3"
+  },
+  "devDependencies": {
+    "tape": "~0.3.2"
+  },
+  "peerDependencies": {
+    "mojito-cli": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yahoo/mojito-validate.git"
+  },
+  "bugs": "https://github.com/yahoo/mojito-validate/issues",
+  "contributors": [
+    "Chris Klaiber <cklaiber@yahoo-inc.com>",
+    "Drew Folta <folta@yahoo-inc.com>",
+    "Isao Yagi <isao@yahoo-inc.com>",
+    "Martin Cooper <mcooper@yahoo-inc.com>",
+    "Matt Taylor <mtaylor@yahoo-inc.com>",
+    "Ric Allinson <allinson@yahoo-inc.com>",
+    "Yujun Qian <yjqian@yahoo-inc.com>"
+  ],
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [
+    "mojito",
+    "validate"
+  ]
+}
