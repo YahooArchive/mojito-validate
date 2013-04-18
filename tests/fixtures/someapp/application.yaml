@@ -1,0 +1,521 @@
+[{
+
+#------------------------------------------------------------------------------
+# GLOBAL SEARCH SETTINGS.
+#------------------------------------------------------------------------------
+
+    "settings": ["master"],
+
+    "yui": {
+        "dependencyCalculations": "precomputed+ondemand",
+        "config": {
+            "base": "http://l.yimg.com/zz",
+            "comboBase": "http://l.yimg.com/zz/combo?",
+            "comboSep": "&",
+            "combine": true,
+            "root": "yui:3.8.1/build/",
+            "debug": true,
+            "logLevel": "warn"
+        }
+    },
+
+    "shareYUIInstance": true,
+
+    "lazyload": {
+        "enabled": false
+    },
+
+    "jscheck": {
+        "enabled": true
+    },
+
+    "cookieDomain": ".search.yahoo.com",
+
+    "middleware": [
+        "mojito-handler-static",
+        "mojito-parser-body",
+        "mojito-parser-cookies",
+        "./node_modules/yahoo-utils-search-environment/middleware/mojito-search-contextualizer.js",
+        "./node_modules/yahoo-utils-ult/middleware/mojito-ult.js",
+        "./node_modules/yahoo-utils-debug/middleware/debug.js",
+        "./node_modules/yahoo-utils-jscheck/middleware/mojito-jscheck.js",
+        "mojito-handler-tunnel",
+        "mojito-router",
+        "mojito-handler-dispatcher"
+    ],
+
+    "i13n": {
+        "beacon": "http://search.yahoo.com/beacon/b.gif"
+    },
+
+    "staticHandling": {
+        "appName": "app"
+    },
+
+    "shaker": {
+        "tasks": {
+            "js": {
+                "jslint": true,
+                "jsminify": true
+            },
+            "css": {
+                "csslint": true,
+                "cssminify": true
+            }
+        },
+
+        "resources": {
+            "assets": {
+                "css": "inline"
+            },
+            "langs": false,
+            "controllers": false,
+            "views": false
+        },
+
+        "routeRollups": {
+            "module": "mojitrollup",
+            "rollups": {
+                "search-front-page": [
+                    "Logo",
+                    "NavigationTabs",
+                    "SearchBox",
+                    "SearchDirect",
+                    "Index",
+                    "Footer"
+                ]
+            }
+        },
+
+        "locations": {
+            "mobstor": {
+                "mobstorConfig": {
+                    "prefix": "pv",
+                    "ycs": "l.yimg.com/pv/",
+                    "host": "search.zenfs.com",
+                    "certificate": "yahoo.mobstor.client.search.prod",
+                    "proxy": {
+                        "host": "yca-proxy.corp.yahoo.com",
+                        "port": 3128
+                    }
+                }
+            }
+        },
+
+        "settings": {
+            "serveLocation": "mobstor",
+            "inline": true,
+            "serveJs": {
+                "combo": false,
+                "position": "bottom"
+            },
+            "serveCss": {
+                "position": "top",
+                "combo": false
+            }
+        }
+    },
+
+    "queryHighlight": {
+        "queryParameter": "p"
+    },
+
+    "params": {
+        "keep": ["fr", "tmpl", "device", "lang"],
+        "remove": ["b"],
+        "onchange": {
+            "p": {
+                "remove": "*"
+            }
+        }
+    },
+
+    "lpm-model": {
+        "validate-envelope": true,
+        "freeze-lpm-data": true,
+        "providers": {
+            "gsm": {
+                "port": 4080,
+                "path": "/lpm",
+                "timeout": 5000
+            }
+        }
+    },
+
+    "actionTimeout": false,
+
+    "specs": {
+
+        "htmlframe": {
+            "type": "ShakerHTMLFrameMojit",
+            "config": {
+                "deploy": true,
+                "enableDynamicTitle": true,
+                "child": {
+                    "base": "master"
+                }
+            }
+        },
+
+        "debughtmlframe": {
+            "type": "ShakerHTMLFrameMojit",
+            "config": {
+                "deploy": true,
+                "title": "Debugger",
+                "child": {
+                    "base": "debug"
+                }
+            }
+        },
+
+        "fronthtmlframe": {
+            "type": "ShakerHTMLFrameMojit",
+            "config": {
+                "deploy": true,
+                "enableDynamicTitle": true,
+                "child": {
+                    "base": "index"
+                }
+            }
+        },
+
+        "searchbox": {
+            "type": "SearchBox",
+            "config": {
+                "sticky-params": {
+                    "tmpl": null
+                }
+            }
+        },
+
+        "logo": {
+            "type": "Logo"
+        },
+
+        "index": {
+            "type": "Index"
+        },
+
+        "navigationtabs": {
+            "type": "NavigationTabs"
+        },
+
+        "master": {
+            "type": "Master",
+            "config": {
+
+                "plan": [{
+                    "view": "search",
+                    "id": "header",
+                    "tasks": [{
+                        "base": "searchbox"
+                    }],
+                    "on": {
+                        "end": ["contentType", "top", "title", "flush"]
+                    }
+                }, {
+                    "type": "any",
+                    "items": [{
+                        "view": "body",
+                        "on": {
+                            "end": ["topBody", "body", "flush"],
+                            "error": "error",
+                            "timeout": "error"
+                        },
+                        "id": "body",
+                        "blocked": true,
+                        "tasks": [{
+                            "base": "filter-breadcrumbs"
+                        }]
+                    }, {
+                        "view": "error",
+                        "on": {
+                            "end": ["flush"]
+                        },
+                        "id": "error",
+                        "blocked": true,
+                        "tasks": [{
+                            "base": "generic-error"
+                        }]
+                    }]
+                }, {
+                    "view": "footer",
+                    "tasks": [{
+                        "base": "footer"
+                    }],
+                    "on": {
+                        "end": ["done"]
+                    },
+                }],
+
+                "envParamsMap": {
+                    "device": "device",
+                    "testid": "testid"
+                },
+
+                "hits": 10,
+                "offset": 0,
+                "renderTimeout": 1000
+            }
+        },
+
+        "footer": {
+            "type": "Footer"
+        },
+
+        "search-direct": {
+            "type": "SearchDirect"
+        },
+
+        "debug": {
+            "type": "Debug",
+            "config": {
+                "deploy": true,
+                "clientModules": {},
+                "serverModules": {
+
+                    "ult-page-params": {
+                        "description": "Displays ULT page level parameters logged by the frontend server.",
+                        "title": "ULT page level parameters"
+                    },
+
+                    "spaceid": {
+                        "description": "Displays the space id.",
+                        "title": "Space Id"
+                    },
+
+                    "headers": {
+                        "description": "Displays headers received from the server.",
+                        "title": "Headers"
+                    },
+
+                    "cookies": {
+                        "description": "Displays cookies received from the server.",
+                        "title": "Cookies"
+                    },
+
+                    "hosts": {
+                        "description": "Displays the addresses of various hosts.",
+                        "title": "Hosts"
+                    },
+
+                    "context": {
+                        "description": "Displays context values.",
+                        "type": "Context",
+                        "title": "Context"
+                    },
+
+                    "lpm-providers": {
+                        "description": "Displays the request and response of each LPM provider.",
+                        "type": "LpmProviders",
+                        "title": "LPM Providers"
+                    },
+
+                    "waterfall": {
+                        "description": "Displays backend and frontend timeline.",
+                        "type": "SearchWaterfall",
+                        "title": "Waterfall"
+                    },
+
+                    "tasks": {
+                        "description": "Displays mojito-scheduler-addon tasks and their dependencies.",
+                        "type": "Tasks",
+                        "title": "Tasks"
+                    },
+
+                    "search-environment": {
+                        "description": "Displays all the values from search-envrionment-addon.",
+                        "type": "SearchEnvironment",
+                        "title": "Search Environment"
+                    },
+
+                    "search-preferences": {
+                        "description": "Displays debug information for search-preferences-addon.",
+                        "type": "SearchPreferences",
+                        "title": "Search Preferences"
+                    }
+                },
+
+                "aliases": {
+                    "req": [
+                        "lpm-providers"
+                    ]
+                }
+            }
+        },
+
+        "universal-header": {
+            "type": "UniversalHeader"
+        },
+
+        "generic-error": {
+            "type": "GenericError"
+        }
+    },
+
+    "preferences": {
+
+        "authenticated": {
+            "cookie": "sS"
+        },
+
+        "cookieOptions": {
+            "domain": "search.yahoo.com"
+        },
+
+        "sonoraField": "srch",
+
+        "sonora": {
+            "search": {
+                "v1": [
+                    "srch"
+                ]
+            }
+        },
+
+        "unauthenticated": {
+            "cookie": "sB"
+        },
+
+        "values": {
+            "v": null,
+            "vm": null,
+            "skin": null,
+            "loc": null,
+            "rw": null,
+            "n": null
+        }
+    },
+
+    "sonora": {
+        "host": "sonora.stage.vip.bf1.yahoo.com",
+        "port": 4080,
+        "timeout": 300,
+        "ycaCertificate": "yahoo.ups.clients.access.env-stage"
+    }
+}, {
+    "settings": ["environment:prod"],
+
+    "search-l7-headers-keyname": "search_l7.headers_key.prod",
+
+    "sonora": {
+        "host": "sonora.ups.yahoo.com",
+        "timeout": 100
+    },
+
+    "lpm-model": {
+        "validate-envelope": false,
+        "freeze-lpm-data": false
+    }
+}, {
+    "settings": ["environment:feperf"],
+
+    "lpm-model": {
+        "cache-lpm": true
+    }
+}, {
+    "settings": ["environment:qa"],
+
+    "search-l7-headers-keyname": "search_l7.headers_key.beta"
+}, {
+    "settings": ["environment:staging"],
+
+}, {
+    "settings": ["environment:dev"],
+
+    "search-l7-headers-keyname": "search_l7.headers_key.alpha",
+
+    "yui": {
+        "config": {
+            "logLevel": "info"
+        }
+    }
+}, {
+    "settings": ["environment:corp"],
+
+    "shaker": {
+        "tasks": null,
+        "locations": null,
+        "resources": null,
+        "settings": {
+            "serveLocation": "default",
+            "inline": true,
+            "serveJs": {
+                "combo": false,
+                "position": "bottom"
+            },
+            "serveCss": {
+                "position": "top",
+                "combo": false
+            }
+        }
+    },
+
+    "cookieDomain": ".corp.yahoo.com",
+
+    "sonora": {
+        "proxy": {
+            "host": "yca-proxy.corp.yahoo.com",
+            "port": 3128,
+            "type": "http"
+        }
+    },
+
+    "lpm-model": {
+        "providers": {
+            "gsm": {
+                "proxy": {
+                    "host": "localhost",
+                    "port": 4090,
+                    "type": "http"
+                }
+            }
+        }
+    }
+}, {
+    "settings": ["runtime:client", "environment:prod"],
+
+    # Disable client side logging in production...
+
+    "yui": {
+        "config": {
+            "debug": false
+        }
+    }
+}, {
+    "settings": ["device:desktop"],
+
+    "specs": {
+        "master": {
+            "config": {
+                "tasks": {
+                    "universal-header": {
+                        "base": "universal-header",
+                        "phase": "header",
+                        "template": "universal-header"
+                    }
+                }
+            }
+        }
+    }
+}, {
+    "settings": ["device:tablet"],
+    "selector": "tablet",
+
+    "specs": {
+        "master": {
+            "config": {
+                "tasks": {
+                    "universal-header": {
+                        "base": "universal-header",
+                        "phase": "header",
+                        "template": "universal-header"
+                    }
+                }
+            }
+        }
+    }
+}, {
+    "settings": ["device:phone"],
+    "selector": "phone"
+}]
