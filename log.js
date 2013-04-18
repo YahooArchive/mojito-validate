@@ -3,6 +3,7 @@
  * Copyrights licensed under the New BSD License.
  * See the accompanying LICENSE file for terms.
  */
+
 /*jshint node:true */
 'use strict';
 
@@ -24,13 +25,13 @@ log.style.warn.fg = 'yellow';
 
 // no bg colors
 log.headingStyle.bg =
-log.style.verbose.bg =
-log.style.warn.bg =
-log.style.error.bg =
-log.style.http.bg = null;
+    log.style.verbose.bg =
+    log.style.warn.bg =
+    log.style.error.bg =
+    log.style.http.bg = null;
 
 // disable prefixing
-Object.keys(log.levels).forEach(function(level) {
+Object.keys(log.levels).forEach(function (level) {
     log[level] = log[level].bind(log, '');
 });
 
