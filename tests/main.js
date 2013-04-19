@@ -21,6 +21,34 @@ function reset(t) {
     log.record = log._buffer = [];
 }
 
+test('extra params err', function(t) {
+    function cb(err) {
+        t.equal(err, 'Unknown extra parameters.');
+    }
+    t.plan(1);
+    main([1,2,3,4], {}, {}, cb);
+});
+
+test('no mojito err', function(t) {
+    function cb(err) {
+        t.equal(err, 'Cannot find mojito.');
+    }
+    t.plan(1);
+    main([], {}, {}, cb);
+});
+
+test('no mojito schema err', function(t) {
+    var meta = {mojito: {path: __dirname}};
+
+    function cb(err) {
+        t.equal(err, 'Cannot find mojito configuration schemas.');
+    }
+
+    t.plan(1);
+    main([], {}, meta, cb);
+});
+
+
 test('mojito validate (app cwd)', function (t) {
     t.plan(2);
     reset();
