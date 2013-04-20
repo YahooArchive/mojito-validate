@@ -1,0 +1,34 @@
+[{
+    "settings": ["master"],
+
+    "debugger": {
+        "verbs": ["get"],
+        "path": "/debug/*",
+        "call": "debug.index",
+        "params": "debug=1"
+    },
+
+    "search-front-page": {
+        "verbs": ["get"],
+        "path": "/",
+        "call": "fronthtmlframe.index"
+    },
+
+    "search-result-page": {
+        "verbs": ["get"],
+        "path": "/search",
+        "call": "master.search"
+    },
+
+    "search-advanced-page": {
+        "verbs": ["get", "post"],
+        "path": "/advanced",
+        "call": "advancedhtmlframe.index"
+    },
+
+    "rss": {
+        "verbs": ["get"],
+        "path": "/rss",
+        "call": "rss.index"
+    }
+}]
