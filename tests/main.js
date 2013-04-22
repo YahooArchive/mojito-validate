@@ -21,15 +21,15 @@ function reset(t) {
     log.record = log._buffer = [];
 }
 
-test('extra params err', function(t) {
+test('extra params err', function (t) {
     function cb(err) {
         t.equal(err, 'Unknown extra parameters.');
     }
     t.plan(1);
-    main([1,2,3,4], {}, {}, cb);
+    main([1, 2, 3, 4], {}, {}, cb);
 });
 
-test('no mojito err', function(t) {
+test('no mojito err', function (t) {
     function cb(err) {
         t.equal(err, 'Cannot find mojito.');
     }
@@ -37,7 +37,7 @@ test('no mojito err', function(t) {
     main([], {}, {}, cb);
 });
 
-test('no mojito schema err', function(t) {
+test('no mojito schema err', function (t) {
     var meta = {mojito: {path: __dirname}};
 
     function cb(err) {
@@ -50,7 +50,7 @@ test('no mojito schema err', function(t) {
 
 
 test('mojito validate (someapp cwd)', function (t) {
-    t.plan(2);
+    t.plan(7);
     reset();
 
     var oldcwd = process.cwd(),
@@ -84,8 +84,12 @@ test('mojito validate (someapp cwd)', function (t) {
     process.chdir(cwd);
     main([], null, meta, cb);
     setTimeout(function () {
+        var i = 0;
         t.equals(errors.length, 4);
-        t.same(warns, expectedWarnings);
+        t.equals(warns.length, expectedWarnings.length);
+        for (i = 0; i < warns.length; i = i + 1) {
+            t.ok((expectedWarnings.indexOf(warns[i]) >= 0), "catch validation error successfully");
+        }
         process.chdir(oldcwd);
     }, 3000);
 });
