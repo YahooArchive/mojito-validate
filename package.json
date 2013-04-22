@@ -1,6 +1,6 @@
 {
     "name": "mojito-validate",
-    "version": "0.0.0PR2",
+    "version": "0.0.0PR3",
     "description": "Subcommand for mojito-cli to validate mojito configuration files",
     "dependencies": {
         "npmlog": "0.0.2",
