@@ -67,7 +67,8 @@ test('mojito validate (someapp cwd)', function (t) {
             ],
         meta = {"mojito" : {
             "path": cwd + "/node_modules/mojito"
-        }};
+        }},
+        i;
 
     log.on('log.error', function (m) {
         errors.push(m.message);
@@ -83,17 +84,13 @@ test('mojito validate (someapp cwd)', function (t) {
 
     process.chdir(cwd);
     main([], null, meta, cb);
-    setTimeout(function () {
-        var i = 0;
-        t.equals(errors.length, 4);
-        t.equals(warns.length, expectedWarnings.length);
-        for (i = 0; i < warns.length; i = i + 1) {
-            t.ok((expectedWarnings.indexOf(warns[i]) >= 0), "catch validation error successfully");
-        }
-        process.chdir(oldcwd);
-    }, 3000);
+    t.equals(errors.length, 4);
+    t.equals(warns.length, expectedWarnings.length);
+    for (i = 0; i < warns.length; i = i + 1) {
+        t.ok((expectedWarnings.indexOf(warns[i]) >= 0), "catch validation error successfully");
+    }
+    process.chdir(oldcwd);
 });
-
 
 test('mojito validate (someapp-ok cwd)', function (t) {
     t.plan(2);
@@ -123,9 +120,7 @@ test('mojito validate (someapp-ok cwd)', function (t) {
 
     process.chdir(cwd);
     main([], null, meta, cb);
-    setTimeout(function () {
-        t.equals(errors.length, 0);
-        t.same(warns, expectedWarnings);
-        process.chdir(oldcwd);
-    }, 3000);
+    t.equals(errors.length, 0);
+    t.same(warns, expectedWarnings);
+    process.chdir(oldcwd);
 });
