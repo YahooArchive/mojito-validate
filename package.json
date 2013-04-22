@@ -24,15 +24,7 @@
         "url": "git://github.com/yahoo/mojito-validate.git"
     },
     "bugs": "https://github.com/yahoo/mojito-validate/issues",
-    "contributors": [
-        "Chris Klaiber <cklaiber@yahoo-inc.com>",
-        "Drew Folta <folta@yahoo-inc.com>",
-        "Isao Yagi <isao@yahoo-inc.com>",
-        "Martin Cooper <mcooper@yahoo-inc.com>",
-        "Matt Taylor <mtaylor@yahoo-inc.com>",
-        "Ric Allinson <allinson@yahoo-inc.com>",
-        "Yujun Qian <yjqian@yahoo-inc.com>"
-    ],
+    "author": "Yujun Qian <yjqian@yahoo-inc.com>",
     "license": "BSD",
     "readmeFilename": "README.md",
     "main": "index.js",
