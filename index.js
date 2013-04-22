@@ -45,14 +45,12 @@ Validator.prototype = {
 
     // validate .json configuration file
     _validateJson: function (filePath, schema) {
-        var that = this;
+        var data,
+            instance,
+            report;
 
-        libfs.readFile(filePath, function (err, data) {
-            var instance, report;
-
-            if (err) {
-                throw err;
-            }
+        try {
+            data = libfs.readFileSync(filePath, 'utf8');
 
             try {
                 // Parse as JSON
@@ -69,11 +67,12 @@ Validator.prototype = {
             }
 
             // validate
-            report = that.env.validate(instance, schema);
-
+            report = this.env.validate(instance, schema);
             // echo to command line
-            that.printErrors(report.errors, filePath);
-        });
+            this.printErrors(report.errors, filePath);
+        } catch (error) {
+            throw error;
+        }
     },
 
     // validate .yaml configuration file
@@ -132,35 +131,30 @@ Validator.prototype = {
 };
 
 var walk = function (dir, excludes, cb) {
-    libfs.readdir(dir, function (err, list) {
-        if (err) {
-            cb(err);
-            return;
+
+    var files,
+        file,
+        i,
+        stats;
+
+    try {
+        files = libfs.readdirSync(dir);
+        for (i = 0; i < files.length; i = i + 1) {
+            file = libpath.join(dir, files[i]);
+            stats = libfs.statSync(file);
+
+            if (stats.isDirectory()) {
+                if (!(excludes && excludes.indexOf(file) >= 0)) {
+                    walk(file, excludes, cb);
+                }
+            } else {
+                cb(null, file);
+            }
+
         }
-
-        list.forEach(function (file) {
-            file = libpath.join(dir, file);
-            libfs.stat(file, function (err, stat) {
-                if (err) {
-                    cb(err);
-                    return;
-                }
-
-                if (!stat) {
-                    cb(null);
-                    return;
-                }
-
-                if (stat.isDirectory()) {
-                    if (!(excludes && excludes.indexOf(file) >= 0)) {
-                        walk(file, excludes, cb);
-                    }
-                } else {
-                    cb(null, file);
-                }
-            });
-        });
-    });
+    } catch (err) {
+        cb(err);
+    }
 };
 
 function schemas(file) {
@@ -234,6 +228,8 @@ function main(args, opts, meta, cb) {
             validator.validate(file, ext);
         }
     });
+
+    cb(null, "mojito validate done.");
 }
 
 
